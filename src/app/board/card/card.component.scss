@@ -1,0 +1,45 @@
+.card{
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    background: transparent;
+    border:1px solid #cccccc;
+    border-radius: 5px;
+    width: 50px;
+    height: 120px;
+    padding: 0 2rem;
+    box-shadow: 0px 0px 6px 3px rgba($color: #000000, $alpha: 0.5);
+    perspective: 10000px;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+
+    // Back side of card 
+    &-back {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        backface-visibility: hidden;
+        transform: rotateY(180deg);
+    }
+
+    
+    &.active , &.correct {
+        transform: rotateY(180deg);
+        pointer-events: unset;
+    }
+
+    &.active { 
+       box-shadow: 0px 0px 6px 3px rgba($color: #0074D9, $alpha: 0.5);
+    } 
+
+    &.correct {
+       box-shadow: 0px 0px 6px 3px rgba($color: #2ECC40, $alpha: 0.5);
+    }
+}

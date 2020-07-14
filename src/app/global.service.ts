@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { StateType } from './models/mj.types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalService {
 
-  public card:Subject<number[]> = new Subject<number[]>();
+  public card: Subject<number[]> = new Subject<number[]>();
 
   constructor() { }
 
@@ -24,16 +23,40 @@ export class GlobalService {
     return value % 2 !== 0 || value === 2;
   }
 
-  public generate(count: number = 24): number[]{
+  public generate(count: number = 24): number[] {
     let arr = [];
     for (let i = 0; i < count; i++) {
       let number = this._randomPrimeNumber();
-      arr.push(number);
+
+      if (arr.length >= count / 2) {
+        arr[i] = arr[i - (count / 2)]
+      } else {
+        arr.push(number);
+      }
+    }
+
+    return this._shuffle(arr);
+
+  }
+
+  private _shuffle(arr) {
+    let currentIndex = arr.length;
+    let temporaryValue;
+    let randomIndex;
+
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      temporaryValue = arr[currentIndex];
+      arr[currentIndex] = arr[randomIndex];
+      arr[randomIndex] = temporaryValue;
     }
 
     return arr;
+  };
 
-  }
+
 
 
 }

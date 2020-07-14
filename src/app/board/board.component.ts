@@ -1,18 +1,23 @@
-import { Component, OnInit, ViewChildren, ComponentRef, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, ComponentRef, QueryList, OnDestroy } from '@angular/core';
 import { GlobalService } from '../global.service';
-import { pairwise } from "rxjs/operators"
+import { pairwise, takeUntil } from "rxjs/operators"
 import { CardComponent } from './card/card.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss']
+  styleUrls: ['./board.component.scss'],
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit , OnDestroy {
 
   @ViewChildren(CardComponent) cards: QueryList<CardComponent>
 
+  destroy$:Subject<any> = new Subject<any>();
+
   cardList: number[] = [];
+  correctCount:number = 0;
+
 
   constructor(
     private globalService: GlobalService
@@ -27,7 +32,10 @@ export class BoardComponent implements OnInit {
   detectCardChaneges() {
     this.globalService
       .card
-      .pipe(pairwise())
+      .pipe(
+        takeUntil(this.destroy$),
+        pairwise()
+      )
       .subscribe(([prevValue, currentValue]) => {
         if (prevValue && currentValue) {
           let prevIndex = prevValue[0],
@@ -35,10 +43,10 @@ export class BoardComponent implements OnInit {
             cardArr = this.cards.toArray();
 
           if (prevIndex !== currIndex) {
-
             if (prevValue[1] === currentValue[1]) {
               cardArr[currIndex].state = "vissible";
               cardArr[prevIndex].state = "vissible";
+              this.correctCount++;
 
             } else {
               setTimeout(() => {
@@ -51,6 +59,11 @@ export class BoardComponent implements OnInit {
           }
         }
       })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 

@@ -32,7 +32,7 @@
     
     &.active , &.correct {
         transform: rotateY(180deg);
-        pointer-events: unset;
+        pointer-events: none;
     }
 
     &.active { 
